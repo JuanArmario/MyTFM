@@ -3,7 +3,7 @@ function loadPage(page) {
 }
 
 function loadPDF() {
-    document.getElementById("contentFrame").src = "https://github.com/JuanArmario/MyTFM/blob/e5dccd1d3eec6652c93fe4674c5a1ef82a1ab0a4/Thesis/Machine%20Learning%20vs%20Deep%20Learning%20En%20la%20Detecci%C3%B3n%20del%20C%C3%A1ncer%20de%20H%C3%ADgado.pdf";
+    document.getElementById("contentFrame").src = "https://JuanArmario.github.io/MyTFM/Thesis/Thesis.pdf";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -27,5 +27,3 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector(".sidebar").classList.toggle("active");
     });
 });
-
-
