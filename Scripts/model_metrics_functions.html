@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Metrics Functions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", () => { hljs.highlightAll(); });</script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1e1e1e; color: #f8f8f2; padding: 20px; }
+        pre { background: #2d2d2d; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; }
+        h1 { color: #ffcc66; }
+    </style>
+</head>
+<body>
+    <h1>Model Metrics Functions</h1>
+    <pre><code class="language-python">
+import pandas as pd
+import numpy as np
+
+# Others
+from collections import Counter
+
+# Plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Stats
+import scipy.stats as stats
+from scipy.stats import pearsonr, spearmanr
+
+# Feature selection
+from sklearn.feature_selection import mutual_info_classif
+
+# Preprocessing
+from sklearn.preprocessing import scale
+
+# Selection Models
+from sklearn.model_selection import (
+    train_test_split,
+    GridSearchCV,
+    StratifiedKFold,
+    RandomizedSearchCV,
+    cross_val_score,
+    cross_validate,
+)
+
+# Models
+from sklearn.ensemble import RandomForestClassifier
+
+# Metrics
+from sklearn.metrics import (
+    mean_squared_error,
+    r2_score,
+    confusion_matrix,
+    accuracy_score,
+    classification_report,
+    balanced_accuracy_score,
+    make_scorer,
+    precision_score,
+    recall_score,
+    f1_score,
+    matthews_corrcoef,
+)
+
+
+def calculate_feature_importance(df, target, method="mutual_info", remove_below_mean=False):
+    """
+    Calculates feature importance using a specified method.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing features.
+        target (pd.Series): Target variable.
+        method (str, optional): Method to evaluate feature importance. Options:
+            - 'mutual_info': Mutual information (default).
+            - 'pearson': Pearson correlation.
+            - 'spearman': Spearman correlation.
+        remove_below_mean (bool, optional): If True, removes features below the mean importance. Defaults to False.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing feature names and their importance scores.
+    """
+    df_copy = df.copy()
+
+    # Add random control variables
+    df_copy["aleatorio"] = np.random.uniform(0, 1, size=df_copy.shape[0])
+    df_copy["aleatorio2"] = np.random.uniform(0, 1, size=df_copy.shape[0])
+
+    # Select predictor variables
+    X = df_copy.drop(columns=[target.name])
+
+    # Compute feature importance based on the selected method
+    if method == "mutual_info":
+        mi = mutual_info_classif(X, target)
+        feature_importance = pd.Series(mi, index=X.columns).sort_values(ascending=False)
+
+    elif method == "pearson":
+        corr = X.corrwith(target, method="pearson")
+        feature_importance = corr.abs().sort_values(ascending=False)
+
+    elif method == "spearman":
+        corr, _ = spearmanr(X, target)
+        feature_importance = pd.Series(corr, index=X.columns).abs().sort_values(ascending=False)
+
+    # Remove features after the first occurrence of 'aleatorio' or 'aleatorio2'
+    for idx, feature in enumerate(feature_importance.index):
+        if feature in ["aleatorio", "aleatorio2"]:
+            feature_importance = feature_importance.iloc[:idx]
+            break
+
+    # Remove features below mean importance if requested
+    if remove_below_mean:
+        mean_importance = feature_importance.mean()
+        feature_importance = feature_importance[feature_importance >= mean_importance]
+
+    return pd.DataFrame({"Feature": feature_importance.index, "Importance": feature_importance.values})
+
+
+def get_metrics(y_real, y_pred):
+    """
+    Computes AUC-ROC and plots the ROC curve.
+
+    Args:
+        y_real (array-like): Ground truth (actual) labels.
+        y_pred (array-like): Predicted scores or probabilities.
+
+    Returns:
+        float: AUC-ROC score.
+    """
+    false_positive_rate, recall, _ = roc_curve(y_real, y_pred, pos_label=1)
+    roc_auc = auc(false_positive_rate, recall)
+
+    print(f"- AUC: {roc_auc}")
+    plt.plot(false_positive_rate, recall, "b")
+    plt.plot([0, 1], [0, 1], "r--")
+    plt.title("AUC = %0.2f" % roc_auc)
+    return roc_auc
+
+
+def rskf_comparison_with_metrics(models, X_train, y_train, metrics):
+    """
+    Compares models using cross-validation and multiple metrics.
+
+    Args:
+        models (dict): Dictionary of model names and instances.
+        X_train (pd.DataFrame): Training feature set.
+        y_train (pd.Series): Training target variable.
+        metrics (dict): Dictionary of metric names and scoring functions.
+
+    Returns:
+        tuple: A dictionary of metric results and a list of model names.
+    """
+    results = {metric_name: [] for metric_name in metrics.keys()}
+    names = []
+
+    for k, model in models.items():
+        print(k)
+
+        scores = cross_validate(model, X_train, y_train, cv=5, scoring=metrics, return_train_score=False)
+
+        for metric_name in metrics.keys():
+            metric_scores = scores["test_" + metric_name]
+            mean_score = metric_scores.mean()
+            std_score = metric_scores.std()
+
+            results[metric_name].append(metric_scores)
+
+            print(f"{metric_name.capitalize()} Mean: %0.5f (+/- %0.5f)" % (mean_score, std_score * 2))
+
+        print("-------------------------")
+
+    return results, names
+
+
+def rskf_comparison(models, X_train, y_train):
+    """
+    Compares models using cross-validation with F1-score.
+
+    Args:
+        models (dict): Dictionary of model names and instances.
+        X_train (pd.DataFrame): Training feature set.
+        y_train (pd.Series): Training target variable.
+
+    Returns:
+        tuple: A list of F1-score results and a list of model names.
+    """
+    results = []
+    names = []
+
+    for k, model in models.items():
+        scores = cross_val_score(model, X_train, y_train, cv=5, scoring="f1")
+        results.append(scores)
+        names.append(k)
+
+        print(k)
+        print("Scores:", scores)
+        print("F1-Score: %0.5f (+/- %0.5f)" % (scores.mean(), scores.std() * 2))
+        print("-------------------------")
+
+    return results, names
+
+
+def evaluate_model(df_imputed, X, y, model, numeric_columns, target_column):
+    """
+    Evaluates a model using different imputation techniques.
+
+    Args:
+        df_imputed (pd.DataFrame): Imputed dataset.
+        X (pd.DataFrame): Feature set.
+        y (pd.Series): Target variable.
+        model: Machine learning model instance.
+        numeric_columns (list): List of numerical column names.
+        target_column (str): Name of the target column.
+
+    Returns:
+        tuple: RMSE and R-squared score.
+    """
+    X_imputed = df_imputed[numeric_columns].drop(columns=[target_column])
+    y_imputed = df_imputed[target_column]
+
+    X_train, X_test, y_train, y_test = train_test_split(X_imputed, y_imputed, test_size=0.2, random_state=42)
+
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    return rmse, r2
+
+
+def plot_confusion_matrix(y_true, y_pred, title):
+    """
+    Plots a confusion matrix.
+
+    Args:
+        y_true (array-like): Ground truth labels.
+        y_pred (array-like): Predicted labels.
+        title (str): Title of the confusion matrix plot.
+
+    Returns:
+        None
+    """
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(6, 4))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["No Liver Cancer", "Liver Cancer"], yticklabels=["No Liver Cancer", "Liver Cancer"])
+    plt.title(title)
+    plt.xlabel("Prediction")
+    plt.ylabel("Actual")
+    plt.show()
+    </code></pre>
+</body>
+</html>

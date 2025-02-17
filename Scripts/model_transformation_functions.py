@@ -1,0 +1,151 @@
+import pandas as pd
+import numpy as np
+
+# Others
+from collections import Counter
+
+# Plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Stats
+import scipy.stats as stats
+from scipy.stats import pearsonr, spearmanr
+
+# Feature selection
+from sklearn.feature_selection import mutual_info_classif
+
+# Preprocessing
+from sklearn.preprocessing import scale
+
+# Selection Models
+from sklearn.model_selection import (
+    train_test_split,
+    GridSearchCV,
+    StratifiedKFold,
+    RandomizedSearchCV,
+    cross_val_score,
+    cross_validate,
+)
+
+# Models
+from sklearn.ensemble import RandomForestClassifier
+
+# Metrics
+from sklearn.metrics import (
+    mean_squared_error,
+    r2_score,
+    confusion_matrix,
+    accuracy_score,
+    classification_report,
+    balanced_accuracy_score,
+    make_scorer,
+    precision_score,
+    recall_score,
+    f1_score,
+    matthews_corrcoef,
+)
+
+
+def mejorTransf(df, target, tipo="mutual_info"):
+    """
+    Identifies the best transformations for each feature based on a selected evaluation method.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing features.
+        target (pd.Series): Target variable.
+        tipo (str, optional): Method for evaluating transformations. Options:
+            - 'pearson': Pearson correlation.
+            - 'spearman': Spearman correlation.
+            - 'mutual_info': Mutual information (default).
+
+    Returns:
+        dict: A dictionary mapping each feature to its best transformation.
+    """
+    transformations = {}
+
+    for column in df.columns:
+        if column != target.name:  # Exclude the target variable
+            vv = df[column]
+
+            # Scale feature values
+            vv = pd.Series(scale(vv), name=vv.name)
+
+            # Shift values to avoid issues with log and root operations
+            vv = vv + abs(min(vv)) + 0.0001
+
+            # Define common transformations
+            transf = pd.DataFrame(
+                {
+                    vv.name + "_ident": vv,
+                    vv.name + "_log": np.log(vv),
+                    vv.name + "_exp": np.exp(vv),
+                    vv.name + "_sqrt": np.sqrt(vv),
+                    vv.name + "_sqr": np.square(vv),
+                    vv.name + "_cuarta": vv**4,
+                    vv.name + "_raiz4": vv ** (1 / 4),
+                }
+            )
+
+            # Select best transformation based on specified method
+            if tipo == "pearson":
+                corr_table = pd.DataFrame(
+                    transf.apply(lambda x: pearsonr(x, target)[0]), columns=["Pearson"]
+                )
+                best = corr_table.query("Pearson.abs() == Pearson.abs().max()").index[0]
+                transformations[column] = best.split("_")[-1]
+
+            elif tipo == "spearman":
+                corr_table = pd.DataFrame(
+                    transf.apply(lambda x: spearmanr(x, target)[0]), columns=["Spearman"]
+                )
+                best = corr_table.query("Spearman.abs() == Spearman.abs().max()").index[0]
+                transformations[column] = best.split("_")[-1]
+
+            elif tipo == "mutual_info":
+                mi_table = pd.DataFrame(
+                    transf.apply(
+                        lambda x: mutual_info_classif(x.values.reshape(-1, 1), target)[0]
+                    ),
+                    columns=["Mutual Information"],
+                )
+                best = mi_table.query("`Mutual Information` == `Mutual Information`.max()").index[0]
+                transformations[column] = best.split("_")[-1]
+
+    return transformations
+
+
+def apply_best_transformations(df, transformations, target):
+    """
+    Applies the best transformations (previously identified) to a dataset.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing features.
+        transformations (dict): Dictionary mapping features to their best transformations.
+        target (pd.Series): Target variable.
+
+    Returns:
+        pd.DataFrame: Transformed DataFrame with new feature representations.
+    """
+    transformed_df = pd.DataFrame()
+
+    for column in df.columns:
+        if column != target.name:  # Exclude the target variable
+            vv = df[column]
+            transformation = transformations[column]
+
+            # Apply the selected transformation
+            if transformation == "log":
+                transformed_df[column + "_log"] = np.log(vv + 0.0001)
+            elif transformation == "sqrt":
+                transformed_df[column + "_sqrt"] = np.sqrt(vv)
+            elif transformation == "exp":
+                transformed_df[column + "_exp"] = np.exp(vv)
+            elif transformation == "sqr":
+                transformed_df[column + "_sqr"] = np.square(vv)
+            elif transformation == "cuarta":
+                transformed_df[column + "_cuarta"] = vv**4
+            elif transformation == "raiz4":
+                transformed_df[column + "_raiz4"] = vv ** (1 / 4)
+
+    return transformed_df
