@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/* Estilos generales */
+body {
+    font-family: "Poppins";
+    background: #ffffff;
+    color: #f8f8f2;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+/* Títulos */
+h1 {
+    color: #000000;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Contenedor del código */
+pre {
+    background: #2d2d2d; /* Estilo terminal */
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+/* Código resaltado */
+pre code {
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    color: #f8f8f2;
+    border-radius: 5px;
+}
+
+/* Ajustes para compatibilidad con highlight.js */
+.hljs {
+    background: #2d2d2d !important;
+    border-radius: 5px;
+}
