@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: #F0F4FF;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 285px;
+  display: flex;
+  flex-direction: column;
+  background: #161a2d;
+  padding: 25px 20px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Separador entre grandes bloques */
+.sidebar-links .menu-separator {
+  width: 100%;
+  height: 1px;
+  background: #4f52ba;  /* Color de la línea */
+  margin: 10px 0; /* Espaciado superior e inferior */
+  display: block; /* Asegura que se vea siempre */
+}
+
+/* Ocultar viñetas */
+.sidebar-links {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Usuario */
+.user-account {
+  background: #1E2247;
+  padding: 15px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.user-profile img {
+  width: 50px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.user-profile h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.user-profile span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #d1d1d1;
+}
+
+/* Asegurar que los íconos y el texto estén alineados */
+.sidebar-links li a,
+.sidebar-links h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-weight: 500;
+  padding: 12px 10px;
+  text-decoration: none;
+}
+
+/* Scroll en la barra lateral */
+.sidebar-links {
+  overflow-y: auto;
+  max-height: 75vh;
+}
+
+/* Submenús */
+.submenu-content {
+  display: none;
+  list-style: none;
+  padding-left: 20px;
+}
+
+/* Icono de expansión */
+.toggle-icon {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+/* Separador entre grandes bloques */
+.menu-separator {
+  width: 100%;
+  height: 1px;
+  background: #4f52ba;
+  margin: 15px 0;
+}
+
+/* Contenedor del contenido principal */
+.content {
+  margin-left: 300px; /* Para que no se superponga con el menú */
+  padding: 20px;
+  width: calc(100% - 300px);
+  height: 100vh;
+  background: #f4f4f4;
+  overflow-y: auto;
+}
+
+/* Iframe para mostrar contenido sin recargar la página */
+#contentFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: white;
+}
