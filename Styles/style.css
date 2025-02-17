@@ -19,7 +19,7 @@ body {
   top: 0;
   left: 0;
   height: 100%;
-  width: 285px;
+  width: 301px;
   display: flex;
   flex-direction: column;
   background: #161a2d;
@@ -27,6 +27,8 @@ body {
   overflow-y: auto;
   transition: transform 0.3s ease-in-out;
   z-index: 1000;
+  scrollbar-width: none;
+  border-right: 1px solid #4f52ba;
 }
 
 /* Botón de menú para móviles */
@@ -126,7 +128,7 @@ body {
   padding: 20px;
   width: calc(100% - 300px);
   height: 100vh;
-  background: #f4f4f4;
+  background: #1E2247;
   overflow-y: auto;
 }
 
