@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sidebar Menu</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <aside class="sidebar">
+        <!-- Sección de usuario -->
+        <div class="user-account">
+            <div class="user-profile">
+                <img src="images/profile-img.png" alt="Profile Image" />
+                <div class="user-detail">
+                    <h3>Juan Armario</h3>
+                    <span>Data Scientist and Engineer</span>
+                </div>
+            </div>
+        </div>
+
+        <ul class="sidebar-links">
+            <!-- Overview -->
+            <li>
+                <a href="#" onclick="loadPage('overview.html')">
+                    <span class="material-symbols-outlined"> dashboard </span> Overview
+                </a>
+            </li>
+
+            <div class="menu-separator"></div>
+
+            <!-- Thesis (Desplegable) -->
+            <li class="submenu">
+                <a href="#">
+                    <span class="material-symbols-outlined"> menu_book </span> Thesis
+                    <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                </a>
+                <ul class="submenu-content">
+                    <li><a href="#" onclick="loadPage('introduccion.html')">Introducción</a></li>
+                    <li><a href="#" onclick="loadPage('metodologia.html')">Metodología del estudio</a></li>
+                    <li><a href="#" onclick="loadPage('preprocesamiento.html')">Preprocesamiento</a></li>
+                    <li><a href="#" onclick="loadPage('ml.html')">Machine Learning</a></li>
+                    <li><a href="#" onclick="loadPage('dl.html')">Deep Learning</a></li>
+                    <li><a href="#" onclick="loadPage('comparacion_ml_dl.html')">Comparación ML vs DL</a></li>
+                    <li><a href="#" onclick="loadPage('medicina.html')">Aplicabilidad en Medicina</a></li>
+                    <li><a href="#" onclick="loadPage('conclusiones.html')">Conclusiones</a></li>
+                    <li><a href="#" onclick="loadPage('anexos.html')">Anexos</a></li>
+                </ul>
+            </li>
+
+            <div class="menu-separator"></div>
+
+            <!-- Notebooks (Desplegable) -->
+            <li class="submenu">
+                <a href="#">
+                    <span class="material-symbols-outlined"> terminal </span> Notebooks
+                    <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                </a>
+                <ul class="submenu-content">
+                    <li class="submenu">
+                        <a href="#">
+                            <span class="material-symbols-outlined"> settings </span> Data Preprocessing
+                            <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                        </a>
+                        <ul class="submenu-content">
+                            <li><a href="#" onclick="loadPage('Data_Inspection.html')"><span class="material-symbols-outlined"> search </span> Data Inspection</a></li>
+                            <li><a href="#" onclick="loadPage('Missing_Values_Treatment.html')"><span class="material-symbols-outlined"> error_outline </span> Missing Values Treatment</a></li>
+                            <li><a href="#" onclick="loadPage('Data_Transformation.html')"><span class="material-symbols-outlined"> transform </span> Data Transformation</a></li>
+                            <li><a href="#" onclick="loadPage('Dataset_Balancing.html')"><span class="material-symbols-outlined"> balance </span> Dataset Balancing</a></li>
+                        </ul>
+                    </li>
+                    <li class="submenu">
+                        <a href="#">
+                            <span class="material-symbols-outlined"> analytics </span> ML Modeling
+                            <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                        </a>
+                        <ul class="submenu-content">
+                            <li><a href="#" onclick="loadPage('Models_and_Algorithms.html')"><span class="material-symbols-outlined"> insights </span> Models and Algorithms</a></li>
+                        </ul>
+                    </li>
+                    <li class="submenu">
+                        <a href="#">
+                            <span class="material-symbols-outlined"> hub </span> Neural Networks
+                            <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                        </a>
+                        <ul class="submenu-content">
+                            <li><a href="#" onclick="loadPage('NN-Full_Dataset.html')"><span class="material-symbols-outlined"> dataset </span> NN-Full Dataset</a></li>
+                            <li><a href="#" onclick="loadPage('NN-Processed_Dataset.html')"><span class="material-symbols-outlined"> dataset </span> NN-Processed Dataset</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <div class="menu-separator"></div>
+
+            <!-- Auxiliary Functions (Desplegable) -->
+            <li class="submenu">
+                <a href="#">
+                    <span class="material-symbols-outlined"> code </span> Auxiliary Functions
+                    <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                </a>
+                <ul class="submenu-content">
+                    <li><a href="#" onclick="loadPage('codigo1.html')">Código 1</a></li>
+                    <li><a href="#" onclick="loadPage('codigo2.html')">Código 2</a></li>
+                    <li><a href="#" onclick="loadPage('codigo3.html')">Código 3</a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Contenedor donde se cargará el contenido -->
+    <main class="content">
+        <iframe id="contentFrame" src="overview.html"></iframe>
+    </main>
+
+    <script>
+        function loadPage(page) {
+            document.getElementById("contentFrame").src = page;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".submenu > a").forEach(menu => {
+                menu.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    let subMenu = this.nextElementSibling;
+                    let icon = this.querySelector(".toggle-icon");
+
+                    if (subMenu.style.display === "block") {
+                        subMenu.style.display = "none";
+                        icon.classList.remove("rotated");
+                    } else {
+                        subMenu.style.display = "block";
+                        icon.classList.add("rotated");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
