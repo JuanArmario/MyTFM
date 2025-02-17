@@ -33,23 +33,11 @@
 
             <div class="menu-separator"></div>
 
-            <!-- Thesis (Desplegable) -->
-            <li class="submenu">
-                <a href="#">
+            <!-- Thesis (Carga PDF sin submenús) -->
+            <li>
+                <a href="#" onclick="loadPDF()">
                     <span class="material-symbols-outlined"> menu_book </span> Thesis
-                    <span class="material-symbols-outlined toggle-icon">expand_more</span>
                 </a>
-                <ul class="submenu-content">
-                    <li><a href="#" onclick="loadPage('introduccion.html')">Introducción</a></li>
-                    <li><a href="#" onclick="loadPage('metodologia.html')">Metodología del estudio</a></li>
-                    <li><a href="#" onclick="loadPage('preprocesamiento.html')">Preprocesamiento</a></li>
-                    <li><a href="#" onclick="loadPage('ml.html')">Machine Learning</a></li>
-                    <li><a href="#" onclick="loadPage('dl.html')">Deep Learning</a></li>
-                    <li><a href="#" onclick="loadPage('comparacion_ml_dl.html')">Comparación ML vs DL</a></li>
-                    <li><a href="#" onclick="loadPage('medicina.html')">Aplicabilidad en Medicina</a></li>
-                    <li><a href="#" onclick="loadPage('conclusiones.html')">Conclusiones</a></li>
-                    <li><a href="#" onclick="loadPage('anexos.html')">Anexos</a></li>
-                </ul>
             </li>
 
             <div class="menu-separator"></div>
@@ -120,6 +108,10 @@
     <script>
         function loadPage(page) {
             document.getElementById("contentFrame").src = page;
+        }
+
+        function loadPDF() {
+            document.getElementById("contentFrame").src = "https://drive.google.com/file/d/10qb4tsqmKVnr-QBjcuoPnsRRUPEsPMTB/preview";
         }
 
         document.addEventListener("DOMContentLoaded", function () {

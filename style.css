@@ -128,3 +128,8 @@ body {
   border: none;
   background: white;
 }
+
+/* Ajustes para que el PDF se vea bien en el iframe */
+#contentFrame[src*="drive.google.com"] {
+    height: 90vh;
+}
