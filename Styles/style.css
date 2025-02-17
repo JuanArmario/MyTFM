@@ -10,6 +10,7 @@
 body {
   min-height: 100vh;
   background: #F0F4FF;
+  display: flex;
 }
 
 /* Sidebar */
@@ -24,22 +25,23 @@ body {
   background: #161a2d;
   padding: 25px 20px;
   overflow-y: auto;
-  scrollbar-width: thin;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 }
 
-/* Separador entre grandes bloques */
-.sidebar-links .menu-separator {
-  width: 100%;
-  height: 1px;
-  background: #4f52ba;  /* Color de la línea */
-  margin: 10px 0; /* Espaciado superior e inferior */
-  display: block; /* Asegura que se vea siempre */
-}
-
-/* Ocultar viñetas */
-.sidebar-links {
-  list-style: none;
-  padding-left: 0;
+/* Botón de menú para móviles */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: #161a2d;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1100;
 }
 
 /* Usuario */
@@ -68,9 +70,16 @@ body {
   color: #d1d1d1;
 }
 
-/* Asegurar que los íconos y el texto estén alineados */
-.sidebar-links li a,
-.sidebar-links h4 {
+/* Menú principal */
+.sidebar-links {
+  list-style: none;
+  padding-left: 0;
+  overflow-y: auto;
+  max-height: 75vh;
+}
+
+/* Ítems del menú */
+.sidebar-links li a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -78,29 +87,12 @@ body {
   font-weight: 500;
   padding: 12px 10px;
   text-decoration: none;
+  transition: 0.2s ease-in-out;
 }
 
-/* Scroll en la barra lateral */
-.sidebar-links {
-  overflow-y: auto;
-  max-height: 75vh;
-}
-
-/* Submenús */
-.submenu-content {
-  display: none;
-  list-style: none;
-  padding-left: 20px;
-}
-
-/* Icono de expansión */
-.toggle-icon {
-  margin-left: auto;
-  transition: transform 0.3s ease;
-}
-
-.rotated {
-  transform: rotate(180deg);
+.sidebar-links li a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 /* Separador entre grandes bloques */
@@ -111,9 +103,26 @@ body {
   margin: 15px 0;
 }
 
-/* Contenedor del contenido principal */
+/* Submenús */
+.submenu-content {
+  display: none;
+  list-style: none;
+  padding-left: 20px;
+}
+
+/* Íconos de expansión */
+.toggle-icon {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+/* Contenido principal */
 .content {
-  margin-left: 300px; /* Para que no se superponga con el menú */
+  margin-left: 300px;
   padding: 20px;
   width: calc(100% - 300px);
   height: 100vh;
@@ -121,7 +130,6 @@ body {
   overflow-y: auto;
 }
 
-/* Iframe para mostrar contenido sin recargar la página */
 #contentFrame {
   width: 100%;
   height: 100%;
@@ -129,7 +137,30 @@ body {
   background: white;
 }
 
-/* Ajustes para que el PDF se vea bien en el iframe */
+/* Ajustes para el visor de PDF en el iframe */
 #contentFrame[src*="drive.google.com"] {
-    height: 90vh;
+  height: 90vh;
+}
+
+/* RESPONSIVE DESIGN */
+
+/* Móviles y tablets */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 250px;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .content {
+    margin-left: 0;
+    width: 100%;
+  }
 }
