@@ -97,6 +97,22 @@ body {
   border-radius: 4px;
 }
 
+/* Mantener resaltado el elemento seleccionado */
+.sidebar-links a.active-item {
+    background: rgba(255, 255, 255, 0.15); /* Color más claro para resaltar */
+    border-radius: 4px;
+}
+
+/* Cambia el color del texto cuando está resaltado */
+.sidebar-links a.active-item span {
+    color: #ffffff;
+}
+
+/* Mejor efecto al hacer clic */
+.sidebar-links a:active {
+    transform: scale(0.98); /* Pequeña animación de "clic" */
+}
+
 /* Separador entre grandes bloques */
 .menu-separator {
   width: 100%;
