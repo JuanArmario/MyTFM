@@ -8,10 +8,35 @@ function loadPage(page) {
 }
 
 function loadPDF() {
-    document.getElementById("contentFrame").src = "https://docs.google.com/gview?url=https://juanarmario.github.io/MyTFM/Thesis/Thesis.pdf&embedded=true";
+    closeMenu(); // Cerrar menú al seleccionar Thesis
 
-    // Cerrar el menú solo si Thesis es una hoja
-    closeMenu();
+    let iframe = document.getElementById("contentFrame");
+
+    // Mostrar mensaje de carga antes de cargar el PDF
+    iframe.outerHTML = `<div id="pdfLoadingMessage" class="loading-message">Cargando PDF...</div>`;
+
+    // Esperar un pequeño tiempo antes de cargar el PDF con Google Docs Viewer
+    setTimeout(() => {
+        let newIframe = document.createElement("iframe");
+        newIframe.id = "contentFrame";
+        newIframe.src = "https://docs.google.com/gview?url=https://juanarmario.github.io/MyTFM/Thesis/Thesis.pdf&embedded=true";
+        newIframe.style.width = "100%";
+        newIframe.style.height = "100%";
+        newIframe.style.border = "none";
+
+        // Reemplazar el mensaje con el iframe del PDF
+        document.querySelector(".content").innerHTML = "";
+        document.querySelector(".content").appendChild(newIframe);
+
+        // Intentar recargar si el PDF no se muestra bien
+        newIframe.onload = function () {
+            setTimeout(() => {
+                if (newIframe.contentWindow.document.body.innerHTML.length < 50) {
+                    newIframe.src += "";
+                }
+            }, 1000);
+        };
+    }, 1000); // Pequeño retraso para mejorar la UX
 }
 
 // FUNCIÓN PARA CERRAR EL MENÚ
