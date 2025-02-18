@@ -8,7 +8,7 @@ function loadPage(page) {
 }
 
 function loadPDF() {
-    document.getElementById("contentFrame").src = "https://JuanArmario.github.io/MyTFM/Thesis/Thesis.pdf";
+    document.getElementById("contentFrame").src = "https://docs.google.com/gview?url=https://juanarmario.github.io/MyTFM/Thesis/Thesis.pdf&embedded=true";
 
     // Cerrar el menú solo si Thesis es una hoja
     closeMenu();
