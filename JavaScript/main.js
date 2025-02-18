@@ -13,7 +13,7 @@ function loadPDF() {
     let iframe = document.getElementById("contentFrame");
 
     // Mostrar mensaje de carga antes de cargar el PDF
-    iframe.outerHTML = `<div id="pdfLoadingMessage" class="loading-message">Cargando PDF...</div>`;
+    iframe.outerHTML = `<div id="pdfLoadingMessage" class="loading-message">Loading PDF...</div>`;
 
     // Esperar un pequeño tiempo antes de cargar el PDF con Google Docs Viewer
     setTimeout(() => {
