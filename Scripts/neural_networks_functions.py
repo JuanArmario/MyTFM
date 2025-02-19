@@ -27,13 +27,13 @@ from tensorflow.keras.optimizers import Adam
 # Hyperparameter tuning
 import keras_tuner as kt
 
-def build_model(hp, X_train_norm):
+def build_model(hp, input_dim):
     """
     Builds a neural network model using Keras Tuner for hyperparameter optimization.
 
     Args:
         hp (keras_tuner.HyperParameters): Hyperparameter search space.
-        X_train_norm (np.ndarray or pd.DataFrame): Normalized training feature set used to determine input dimensions.
+        X_train (np.ndarray or pd.DataFrame): Normalized training feature set used to determine input dimensions.
 
     Returns:
         tensorflow.keras.models.Sequential: Compiled neural network model.
@@ -43,9 +43,20 @@ def build_model(hp, X_train_norm):
     # First dense layer
     model.add(
         Dense(
+            units=hp.Int("units_layer1", min_value=64, max_value=256, step=16),
+            activation="relu",
+            input_dim= input_dim,
+        )
+    )
+    model.add(BatchNormalization())
+    model.add(
+        Dropout(hp.Float("dropout_layer1", min_value=0.2, max_value=0.5, step=0.1))
+    )
+
+    model.add(
+        Dense(
             units=hp.Int("units_layer1", min_value=32, max_value=128, step=16),
             activation="relu",
-            input_dim=X_train_norm.shape[1],
         )
     )
     model.add(BatchNormalization())
@@ -63,6 +74,18 @@ def build_model(hp, X_train_norm):
     model.add(BatchNormalization())
     model.add(
         Dropout(hp.Float("dropout_layer2", min_value=0.2, max_value=0.5, step=0.1))
+    )
+
+    # Third dense layer
+    model.add(
+        Dense(
+            units=hp.Int("units_layer3", min_value=8, max_value=32, step=16),
+            activation="relu",
+        )
+    )
+    model.add(BatchNormalization())
+    model.add(
+        Dropout(hp.Float("dropout_layer3", min_value=0.2, max_value=0.5, step=0.1))
     )
 
     # Output layer
